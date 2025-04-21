@@ -11,6 +11,7 @@ A RESTful API system that allows users to perform CRUD operations on locations, 
 - **Exception Handling** with detailed error responses
 - **Logging** using Winston logger
 - **Clean Code** with proper documentation
+- **Docker Support** for easy deployment and development
 
 ## Database Schema
 
@@ -27,8 +28,11 @@ The system is designed to store location data in a tree structure with the follo
 - Node.js (v16.x or later)
 - PostgreSQL (v12 or later)
 - npm or yarn
+- Docker and Docker Compose (optional, for containerized deployment)
 
 ## Installation
+
+### Option 1: Local Installation
 
 1. Clone the repository:
    ```bash
@@ -49,7 +53,28 @@ The system is designed to store location data in a tree structure with the follo
 
 4. Start PostgreSQL and create a database named `location_management`.
 
+### Option 2: Docker Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/location-management-api.git
+   cd location-management-api
+   ```
+
+2. Build and start the containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+   This will:
+   - Build the API container
+   - Start a PostgreSQL container
+   - Set up the necessary environment variables
+   - Create a persistent volume for the database
+
 ## Running the Application
+
+### Local Development
 
 1. Development mode:
    ```bash
@@ -65,6 +90,28 @@ The system is designed to store location data in a tree structure with the follo
 3. Seed the database with sample data:
    ```bash
    npm run seed
+   ```
+
+### Docker Development
+
+1. Start the application:
+   ```bash
+   docker-compose up -d
+   ```
+
+2. View logs:
+   ```bash
+   docker-compose logs -f
+   ```
+
+3. Stop the application:
+   ```bash
+   docker-compose down
+   ```
+
+4. Rebuild containers (after making changes):
+   ```bash
+   docker-compose up -d --build
    ```
 
 ## API Endpoints
