@@ -1,0 +1,47 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { CustomLoggerService } from './common/logging/logger.service';
+import * as fs from 'fs';
+import * as path from 'path';
+
+async function bootstrap() {
+  // Create logs directory if it doesn't exist
+  const logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+  }
+
+  // Create NestJS application
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  
+  // Use custom logger service
+  const logger = app.get(CustomLoggerService);
+  app.useLogger(logger);
+  
+  // Enable global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Strip properties not defined in DTOs
+      forbidNonWhitelisted: true, // Throw error if non-whitelisted properties exist
+      transform: true, // Transform incoming data to instance of DTO class
+      transformOptions: {
+        enableImplicitConversion: true, // Auto-convert primitive types
+      },
+    }),
+  );
+  
+  // Enable CORS
+  app.enableCors();
+  
+  // Get application port from config
+  const port = app.get('ConfigService').get('app.port') || 3000;
+  
+  // Start the server
+  await app.listen(port);
+  logger.log(`Application is running on: http://localhost:${port}`, 'Bootstrap');
+}
+
+bootstrap();
